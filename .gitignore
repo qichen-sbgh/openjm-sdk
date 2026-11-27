@@ -1,0 +1,19 @@
+# 任何真实文档与生产密钥
+*.jm
+*.pdf
+keys.json
+keys.*.json
+*.local.json
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+
+# macOS
+.DS_Store
