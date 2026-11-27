@@ -152,3 +152,19 @@ def test_decrypt_cleans_up_on_bad_password(crypto, sample_pdf: Path, tmp_path: P
         crypto.decrypt_file(result.output_path, tmp_path / "x.pdf", password="bad")
     assert not (tmp_path / "x.pdf").exists()
     assert not list(tmp_path.glob(".*.tmp"))
+
+
+def test_default_key_id_only_matters_for_encryption(sample_pdf: Path, tmp_path: Path):
+    """只装测试密钥(254)时，校验/解密照常可用——CLI 的 verify 依赖这一点。"""
+    from openjm import JMCrypto
+
+    vector_keys = {254: hashlib.sha256(b"openjm-test-vector-key-v1").digest()}
+    signer = JMCrypto(vector_keys, default_key_id=254)
+    result = signer.encrypt_file(sample_pdf)
+
+    reader = JMCrypto(vector_keys, default_key_id=1)  # 默认 id 不在库里，但只解密
+    assert reader.verify_file(result.output_path)["doc_id"] == result.doc_id
+    assert reader.decrypt_file(result.output_path, tmp_path / "out.pdf").output_path.exists()
+
+    with pytest.raises(ValueError):
+        reader.encrypt_file(sample_pdf)  # 加密才需要默认密钥

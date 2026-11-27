@@ -87,9 +87,8 @@ class JMCrypto:
     """JM v1 加解密客户端。实例无状态，可在线程间复用。"""
 
     def __init__(self, root_keys: Mapping[int, bytes], default_key_id: int = 1) -> None:
+        # default_key_id 只影响加密；只做校验/解密时可以装一套密钥、默认 id 不在里面。
         self._root_keys = normalize_root_keys(root_keys)
-        if default_key_id not in self._root_keys:
-            raise ValueError(f"default_key_id={default_key_id} 不在 root_keys 中")
         self._default_key_id = default_key_id
 
     # ---------------------------------------------------------------- 头部
