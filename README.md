@@ -2,6 +2,8 @@
 
 `.jm` v1 加密文档容器的**发送端 SDK**。给 QQ 机器人流水线、批处理脚本、服务端用：把 PDF 封装成 `.jm`，顺手也能校验和解密，方便跨端对齐。
 
+`compatible: proto-v1`
+
 协议规范与测试向量在 [`openjm`](https://github.com/qichen-sbgh/openjm) 仓库，本仓只负责实现，不改协议。
 
 ## 安装
