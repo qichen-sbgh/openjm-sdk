@@ -26,6 +26,13 @@ jobs:
           repository: qichen-sbgh/openjm
           path: openjm
 
+      # 防呆：向量没拉到时明确失败，不要退回"静默 skip"
+      - name: Verify vectors present
+        run: |
+          set -e
+          test -f "$PWD/openjm/testvectors/manifest.json"
+          echo "vectors OK"
+
       - run: python -m pytest -q
         env:
           OPENJM_TESTVECTORS: ${{ github.workspace }}/openjm/testvectors
