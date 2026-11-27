@@ -9,7 +9,7 @@
     print(result.output_path)          # doc_20261127_a1b2c3d4.jm
     print(crypto.verify_file(result.output_path)["name"])   # 原始文件名
 
-协议见 openjm 仓库 `docs/protocol-v1.md`；跨端测试向量见 `testvectors/`。
+协议见 openjm 仓库 `docs/tech/protocol.md`；跨端测试向量见 `testvectors/`。
 """
 
 from __future__ import annotations
