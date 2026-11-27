@@ -94,11 +94,17 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--key-id", type=int, default=1, help="无感模式使用的 key_id，默认 1")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p = sub.add_parser("inspect", help="只看头部，不解密")
+    # 同样的两个选项在子命令后面也认：`openjm encrypt a.pdf --key-id 254` 更符合手感。
+    # default=SUPPRESS 是关键，否则子解析器的默认值会把主解析器收到的值覆盖成 None。
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--key-file", default=argparse.SUPPRESS)
+    common.add_argument("--key-id", type=int, default=argparse.SUPPRESS)
+
+    p = sub.add_parser("inspect", parents=[common], help="只看头部，不解密")
     p.add_argument("file")
     p.set_defaults(func=_cmd_inspect)
 
-    p = sub.add_parser("encrypt", help="封装为 .jm")
+    p = sub.add_parser("encrypt", parents=[common], help="封装为 .jm")
     p.add_argument("file")
     p.add_argument("-o", "--output", help="输出路径或目录；默认与源文件同目录、脱敏命名")
     p.add_argument("--keep-name", action="store_true", help="保留原文件名（默认脱敏为 doc_日期_随机.jm）")
@@ -107,12 +113,12 @@ def main(argv: Optional[List[str]] = None) -> int:
     p.add_argument("--pad-max", type=int, default=4096, help="随机填充上限，默认 4096")
     p.set_defaults(func=_cmd_encrypt)
 
-    p = sub.add_parser("verify", help="只校验完整性并打印 Meta")
+    p = sub.add_parser("verify", parents=[common], help="只校验完整性并打印 Meta")
     p.add_argument("file")
     p.add_argument("--password")
     p.set_defaults(func=_cmd_verify)
 
-    p = sub.add_parser("decrypt", help="校验通过后解密为明文")
+    p = sub.add_parser("decrypt", parents=[common], help="校验通过后解密为明文")
     p.add_argument("file")
     p.add_argument("-o", "--output", required=True, help="输出目录，或 --original-name 时导出的父目录")
     p.add_argument("--original-name", action="store_true", help="用 Meta 里的原始文件名落盘")
