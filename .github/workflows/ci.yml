@@ -18,5 +18,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e ".[dev]"
-      # 向量集在另一个仓库，没有检出时 conformance 用例会自动 skip
+
+      # openjm 总仓已公开，冻结向量可以匿名拉；之前 conformance 用例在 CI 里一直是 skip 的
+      - name: Checkout test vectors
+        uses: actions/checkout@v4
+        with:
+          repository: qichen-sbgh/openjm
+          path: openjm
+
       - run: python -m pytest -q
+        env:
+          OPENJM_TESTVECTORS: ${{ github.workspace }}/openjm/testvectors
